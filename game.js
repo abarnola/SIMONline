@@ -3,6 +3,7 @@ var gamePattern = []
 var clickPattern = []
 var gameStarted = false
 var level = 0
+var numColors = 4
 
 //Add sounds to each button
 $('.btn').on('click', function() {
@@ -10,25 +11,37 @@ $('.btn').on('click', function() {
 
     clickPattern.push(color)
     buttonClickAnimation(color)
-    playButtonSound(color)
+    playSound(color)
     checkAnswer(clickPattern.length - 1)
+})
+
+$('#play').on('click', function() {
+    buttonClickAnimation('play')
+
+    startGame()
+    $(this).addClass('hidden')
+    $('#level-title').text('Level ' + level)
 })
 
 $(document).on('keypress', function() {
     if (!gameStarted){
-        gamePattern = []
-        clickPattern = []
-        $('#restart').remove()
-        nextInSequence()
-        gameStarted = true
-        $('#level-title').text('Level ' + level)
+        startGame()
     }
 })
 
+const startGame = () => {
+    gamePattern = []
+    clickPattern = []
+    level = 0
+    $('#restart').remove()
+    $('#level-title').text('Level ' + level)
+    nextInSequence()
+}
+
 const nextInSequence = () => {
-    let color = buttonColors[Math.floor(Math.random() * 4)]
+    let color = buttonColors[Math.floor(Math.random() * numColors)]
     nextButtonAnimation(color)
-    playButtonSound(color)
+    playSound(color)
     gamePattern.push(color)
     
     level++
@@ -45,8 +58,7 @@ const checkAnswer = (current) => {
         }
     }
     else if (level > 0) {
-        let wrongSound = new Audio('sounds/wrong.mp3')
-        wrongSound.play()
+        
 
         $('.container').toggleClass('game-over')
         setTimeout( () => {
@@ -55,21 +67,23 @@ const checkAnswer = (current) => {
         gameOver()
     }
 }
+
 const gameOver = () => {
+    playSound('wrong')
     $('#level-title').text('You reached level ' + level)
+
     gamePattern = []
-    level = 0
     clickPattern = []
     gameStarted = false
 
-    $('.container').after('<h2 id="restart">Press Any Key to Restart</h2>')
+    $('#play').removeClass('hidden').html('Restart')
 }
 
-const buttonClickAnimation = (color) => {
-    $('#' + color).toggleClass('pressed')
+const buttonClickAnimation = (id) => {
+    $('#' + id).toggleClass('pressed')
 
     setTimeout(function () {
-        $('#' + color).toggleClass('pressed')
+        $('#' + id).toggleClass('pressed')
     }, 150)
 }
 
@@ -77,8 +91,7 @@ const nextButtonAnimation = (color) => {
     $('#' + color).fadeOut(150).fadeIn(150)
 }
 
-const playButtonSound = (color) => {
-    let buttonSound = new Audio('sounds/' + color + '.mp3')
-    buttonSound.play()
+const playSound = (filename) => {
+    let sound = new Audio('sounds/' + filename + '.mp3')
+    sound.play()
 }
-
