@@ -15,18 +15,19 @@ $('.btn').on('click', function() {
     checkAnswer(clickPattern.length - 1)
 })
 
+/* Key press to start the game
+$(document).on('keypress', function() {
+    if (!gameStarted){
+        startGame()
+    }
+}) */
+
 $('#play').on('click', function() {
     buttonClickAnimation('play')
 
     startGame()
     $(this).addClass('hidden')
     $('#level-title').text('Level ' + level)
-})
-
-$(document).on('keypress', function() {
-    if (!gameStarted){
-        startGame()
-    }
 })
 
 const startGame = () => {
@@ -58,8 +59,6 @@ const checkAnswer = (current) => {
         }
     }
     else if (level > 0) {
-        
-
         $('.container').toggleClass('game-over')
         setTimeout( () => {
             $('.container').toggleClass('game-over')
